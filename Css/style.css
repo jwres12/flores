@@ -111,7 +111,7 @@ canvas {
 
 @media (max-width: 468px) {
     body {
-        background: color("gray");
+        background: color(gray);
 
     }
 }
