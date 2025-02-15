@@ -3,41 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Flores Amarillas &lt;3</title>
-    <link rel="stylesheet" href="Css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inclusive+Sans:ital@1&display=swap" rel="stylesheet">
-    <!--
-        Codigo By: MartL7
-    -->
+    <title>Ruleta de Regalos</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            text-align: center;
+            padding: 20px;
+        }
+        .button {
+            background-color: #ff6f61;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 10px;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #e55e53;
+        }
+        .roulette-result {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        .result-message {
+            font-size: 1.2em;
+            margin-top: 30px;
+            font-weight: bold;
+            color: #ff6f61;
+        }
+        #spinButton {
+            margin-top: 20px;
+        }
+        #restartButton {
+            margin-top: 20px;
+            background-color: #4CAF50;
+            display: none; /* Inicialmente oculto */
+        }
+        #videoContainer {
+            display: none;
+            margin-top: 30px;
+        }
+        /* Aseguramos que los botones y otros elementos estén centrados */
+        .centered {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Media query para adaptarse a pantallas más pequeñas (móviles) */
+        @media only screen and (max-width: 600px) {
+            .button {
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+            .roulette-result {
+                font-size: 1.2em;
+            }
+            iframe {
+                width: 100%;
+                height: 315px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <div class="Contenedor-Binicio">
-        <button class="Button" id="BVer"> Clicka aqui </button>
+    <h1>¡Ruleta de Regalos! 🎁</h1>
+    <p>Haz girar la ruleta y recibe uno de los regalos especiales. ¡Recibe tres veces el mismo regalo para ganar!</p>
+
+    <div id="roulette" class="roulette-result">
+        <h2>Regalo: <span id="giftName">???</span></h2>
     </div>
 
-    <div class="Con-Emergente">
-        <div id="resultado" class="cua">
-            <p id="res">
-                Hola, antes de iniciar, solo quiero recordarte que eres 
-                muy especial para mí y gracias por todo. &lt;3
-            </p>    
-            <button id="BotonCerrar" class="Button">Cerrar</button>
-        </div>
+    <button id="spinButton" class="button centered" onclick="spinRoulette()">Girar la Ruleta</button>
+    
+    <div id="resultMessage" class="result-message"></div>
+    <button id="restartButton" class="button centered" onclick="restartGame()">Volver a jugar</button>
+
+    <!-- Video de felicitaciones (integración de un YouTube Short) -->
+    <div id="videoContainer">
+        <h2>¡Felicitaciones! 🎉</h2>
+        <p>Te ganaste el regalo. Pero antes, mira esto...</p>
+        <!-- Aquí pega el código del YouTube Short -->
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/LI2d9L_rlDw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <p>¡Gracias por ser mi mejor amiga! 💖</p>
     </div>
 
-    <main class="Contenedor">
-        <canvas id="Flor" class="Flor" width="800" height="600"></canvas>
+    <script>
+        let gifts = ["Vale para un día de spa 🧖‍♀️", "Caja de chocolates 🍫", "Noche de cine y pizza 🍕", "Un libro de aventuras 📚", "Una planta decorativa 🌱"];
+        let giftCounts = {
+            "Vale para un día de spa 🧖‍♀️": 0,
+            "Caja de chocolates 🍫": 0,
+            "Noche de cine y pizza 🍕": 0,
+            "Un libro de aventuras 📚": 0,
+            "Una planta decorativa 🌱": 0
+        };
+        let attempts = 0;
+        let maxAttempts = 5;
 
-        <div class="Texto">
-            <h2 id="Text">Para la niña mas Linda del Mundo.</h2>
-        </div>
+        // Función para hacer girar la ruleta
+        function spinRoulette() {
+            if (attempts >= maxAttempts) {
+                // Aseguramos que el mensaje de pérdida se muestra correctamente
+                showMessage("¡Has llegado al límite de intentos!");
+                return;
+            }
+            
+            let randomGift = gifts[Math.floor(Math.random() * gifts.length)];
+            giftCounts[randomGift]++;
+            attempts++;
 
-    </main>
+            // Actualizar el regalo mostrado
+            document.getElementById("giftName").innerText = randomGift;
+            document.getElementById("resultMessage").innerText = "Intento #" + attempts + ": " + randomGift;
 
-    <script src="Js/app.js"></script>
-    <script src="Js/Dis.js"></script>
+            // Comprobar si el mismo regalo ha salido 3 veces
+            for (let gift in giftCounts) {
+                if (giftCounts[gift] === 3) {
+                    showMessage("¡Felicidades! Tomale una captura para evidencia: " + gift + " 🎉");
+                    return;
+                }
+            }
+
+            // Si llega al quinto intento, mostrar mensaje especial de pérdida
+            if (attempts === maxAttempts) {
+                showMessage("¡No lograste 3 repeticiones del mismo regalo! Pero no te preocupes, tienes intentos ilimitados. Animo :)");
+            }
+        }
+
+        // Mostrar mensaje de felicitaciones y video
+        function showMessage(msg) {
+            document.getElementById("resultMessage").innerText = msg;
+            document.getElementById("spinButton").style.display = "none";
+            document.getElementById("restartButton").style.display = "block";
+            
+            // Si se gana, mostrar el video de felicitaciones
+            if (msg.includes("¡Felicidades!")) {
+                document.getElementById("videoContainer").style.display = "block";
+            }
+        }
+
+        // Reiniciar el juego
+        function restartGame() {
+            giftCounts = {
+                "Vale para un día de spa 🧖‍♀️": 0,
+                "Caja de chocolates 🍫": 0,
+                "Noche de cine y pizza 🍕": 0,
+                "Un libro de aventuras 📚": 0,
+                "Una planta decorativa 🌱": 0
+            };
+            attempts = 0;
+            document.getElementById("giftName").innerText = "???";
+            document.getElementById("resultMessage").innerText = "";
+            document.getElementById("videoContainer").style.display = "none";
+            document.getElementById("spinButton").style.display = "block";
+            document.getElementById("restartButton").style.display = "none";
+        }
+    </script>
+
 </body>
 </html>
